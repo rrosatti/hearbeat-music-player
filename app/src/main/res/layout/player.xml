@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Player Header -->
+    <RelativeLayout
+        android:id="@+id/layoutPlayerHeader"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:orientation="horizontal"
+        android:paddingRight="5dp">
+
+        <!-- Song Title -->
+        <TextView
+            android:id="@+id/txtSongTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="10pt"
+            android:text="Times Like These"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"/>
+
+        <!-- Playlist Button -->
+        <ImageButton
+            android:id="@+id/btPlaylist"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/playlist_button_pressed"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <!-- Thumbnail and Seekbar Area -->
+    <LinearLayout
+        android:id="@+id/layoutThumbnailAndSeekbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="6"
+        android:background="#FFE0B5">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgThumbnail"
+                android:src="@drawable/thumbnail"
+                android:layout_marginTop="15dp"
+                android:layout_weight="3"/>
+
+        <SeekBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:thumb="@drawable/seekbar_thumb"
+            android:progressDrawable="@drawable/seekbar_progress_state"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/imgShuffle"
+                android:src="@drawable/shuffle_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                />
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/imgRepeat"
+                android:src="@drawable/repeat_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="70dp"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Area (Play, Next, Back, etc) -->
+    <RelativeLayout
+        android:id="@+id/layoutBottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1.5"
+        android:background="#80A4ED" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/imgBack"
+                android:src="@drawable/back_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_margin="10dp"/>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/imgBackwards"
+                android:src="@drawable/backward_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_margin="10dp"/>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/imgPlayStop"
+                android:src="@drawable/play_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_margin="10dp"/>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/imgForward"
+                android:src="@drawable/forward_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_margin="10dp"/>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/imgNext"
+                android:src="@drawable/next_button_pressed"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:layout_margin="10dp"/>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>
