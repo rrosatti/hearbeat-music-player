@@ -1,4 +1,4 @@
-package com.example.rodri.heartbeatmusicplayer.activity;
+package com.example.rodri.heartbeatmusicplayer;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

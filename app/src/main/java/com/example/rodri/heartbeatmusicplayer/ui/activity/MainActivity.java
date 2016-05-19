@@ -1,4 +1,4 @@
-package com.example.rodri.heartbeatmusicplayer.ui;
+package com.example.rodri.heartbeatmusicplayer.ui.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
