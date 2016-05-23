@@ -15,6 +15,7 @@ import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.util.Utilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -54,6 +55,9 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         setContentView(R.layout.player);
         initialize();
 
+        /**
+         *  Open Playlist activity
+         */
         btPlalist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +65,36 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
                 startActivityForResult(openPlayList, 100);
             }
         });
+
+        btForward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPos = mediaPlayer.getCurrentPosition();
+
+                if (currentPos + seekForwardTime <= mediaPlayer.getDuration()) {
+                    // forward song
+                    mediaPlayer.seekTo(currentPos + seekForwardTime);
+                } else {
+                    // forward to end
+                    mediaPlayer.seekTo(mediaPlayer.getDuration());
+                }
+            }
+        });
+
+        btBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPos = mediaPlayer.getCurrentPosition();
+
+                if (currentPos - seekBackwardTime >= 0) {
+                    mediaPlayer.seekTo(currentPos - seekBackwardTime);
+                } else {
+                    mediaPlayer.seekTo(0);
+                }
+            }
+        });
+
+
 
     }
 
@@ -87,5 +121,53 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         mediaPlayer.setOnCompletionListener(this);
 
         songsList = songsManager.getPlaylist();
+    }
+
+    /**
+     * Will receive the song index from playlist and play it
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            currentSongIndex = data.getExtras().getInt("songIndex");
+            playSong(currentSongIndex);
+        }
+    }
+
+    public void playSong(int songIndex) {
+
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(songsList.get(songIndex).getPath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+
+            // Display song title
+            String songTitle = songsList.get(songIndex).getTitle();
+            txtSongTittle.setText(songTitle);
+
+            // Change start button to stop button
+            btPlay.setImageResource(R.drawable.stop_button_states);
+
+            // Set values to progress bar
+            songProgressBas.setProgress(0);
+            songProgressBas.setMax(100);
+
+            // Update progress bar
+            updateProgressBar();
+
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
