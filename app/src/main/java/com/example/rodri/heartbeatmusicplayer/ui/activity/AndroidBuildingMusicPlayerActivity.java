@@ -94,6 +94,37 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
             }
         });
 
+        btNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (currentSongIndex < (songsList.size() - 1)) {
+                    playSong(currentSongIndex + 1);
+                    currentSongIndex += 1;
+                } else {
+                    playSong(0);
+                    currentSongIndex = 0;
+                }
+
+            }
+        });
+
+        btPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (currentSongIndex > 0) {
+                    playSong(currentSongIndex - 1);
+                    currentSongIndex -= 1;
+                } else {
+                    playSong(songsList.size() - 1);
+                    currentSongIndex = songsList.size() - 1;
+                }
+
+            }
+        });
+
+
 
 
     }
@@ -169,5 +200,57 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
             e.printStackTrace();
         }
 
+    }
+
+    public void updateProgressBar() {
+        handler.postDelayed(updateTimeTask, 100);
+    }
+
+    private Runnable updateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            long totalDuration = mediaPlayer.getDuration();
+            long currentDuration = mediaPlayer.getCurrentPosition();
+
+            // Set the Current and Total duration to TextView
+            txtTotalDuration.setText(""+utils.millisecondsToTimer(totalDuration));
+            txtCurrentDuration.setText(""+utils.millisecondsToTimer(currentDuration));
+
+            // Updating progress bar
+            int progress = (int) (utils.getProgressPercentage(currentDuration, totalDuration));
+            songProgressBas.setProgress(progress);
+
+            // Repeat this thread each 100 milliseconds
+            handler.postDelayed(this, 100);
+        }
+    };
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    /**
+     * When user starts moving the progress bar
+     * @param seekBar
+     */
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        handler.removeCallbacks(updateTimeTask);
+    }
+
+    /**
+     * When user stops moving the progress bar
+     * @param seekBar
+     */
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        handler.removeCallbacks(updateTimeTask);
+        int totalDuration = mediaPlayer.getDuration();
+        int currentPos = utils.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        mediaPlayer.seekTo(currentPos);
+
+        updateProgressBar();
     }
 }
