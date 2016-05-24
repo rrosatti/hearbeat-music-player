@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
@@ -17,6 +18,7 @@ import com.example.rodri.heartbeatmusicplayer.util.Utilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by rodri on 5/22/2016.
@@ -124,7 +126,41 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
             }
         });
 
+        btRepeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRepeat) {
+                    isRepeat = false;
+                    Toast.makeText(getApplicationContext(), "Reapeat is OFF", Toast.LENGTH_SHORT).show();
+                    btRepeat.setImageResource(R.drawable.repeat_button);
+                } else {
+                    isRepeat = true;
+                    Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
+                    btRepeat.setImageResource(R.drawable.repeat_button_pressed);
 
+                    isShuffle = false;
+                    btShuffle.setImageResource(R.drawable.shuffle_button);
+                }
+            }
+        });
+
+        btShuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isShuffle) {
+                    isShuffle = false;
+                    Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
+                    btShuffle.setImageResource(R.drawable.shuffle_button);
+                } else {
+                    isRepeat = true;
+                    Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
+                    btShuffle.setImageResource(R.drawable.shuffle_button_pressed);
+
+                    isRepeat = false;
+                    btRepeat.setImageResource(R.drawable.repeat_button);
+                }
+            }
+        });
 
 
     }
@@ -252,5 +288,30 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         mediaPlayer.seekTo(currentPos);
 
         updateProgressBar();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+
+        // if repeat is on, then the same song must be repeated
+        if (isRepeat) {
+            playSong(currentSongIndex);
+        } else if (isShuffle) { // is shuffle is on, then we need to random a new song
+            Random random = new Random();
+            currentSongIndex  = random.nextInt((songsList.size() - 1) + 1);
+            playSong(currentSongIndex);
+        } else {
+
+            // play the next song, unless it is the last one.
+            if (currentSongIndex < (songsList.size() - 1)) {
+                playSong(currentSongIndex + 1);
+                currentSongIndex += 1;
+            } else {
+                playSong(0);
+                currentSongIndex = 0;
+            }
+
+        }
+
     }
 }
