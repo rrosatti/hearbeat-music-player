@@ -57,6 +57,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         setContentView(R.layout.player);
         initialize();
 
+        playSong(0);
+
         /**
          *  Open Playlist activity
          */
@@ -313,5 +315,11 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
 
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.release();
     }
 }
