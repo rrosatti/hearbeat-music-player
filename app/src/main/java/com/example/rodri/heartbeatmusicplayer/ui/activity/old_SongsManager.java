@@ -10,12 +10,12 @@ import java.util.HashMap;
 /**
  * Created by rodri on 5/19/2016.
  */
-public class SongsManager {
+public class old_SongsManager {
 
     final String MEDIA_PATH = new String("/sdcard/");
     private ArrayList<Song> songList = new ArrayList<>();
 
-    public SongsManager() {
+    public old_SongsManager() {
 
     }
 

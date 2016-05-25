@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -42,7 +41,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
     private MediaPlayer mediaPlayer;
 
     private Handler handler = new Handler();
-    private SongsManager songsManager;
+    private old_SongsManager oldSongsManager;
     private Utilities utils;
     private int seekForwardTime = 5000; // milliseconds
     private int seekBackwardTime = 5000;
@@ -182,14 +181,14 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         txtTotalDuration = (TextView) findViewById(R.id.txtTotalTime);
 
         mediaPlayer = new MediaPlayer();
-        songsManager = new SongsManager();
+        oldSongsManager = new old_SongsManager();
         utils = new Utilities();
 
         // Listeners
         songProgressBas.setOnSeekBarChangeListener(this);
         mediaPlayer.setOnCompletionListener(this);
 
-        songsList = songsManager.getPlaylist();
+        songsList = oldSongsManager.getPlaylist();
     }
 
     /**

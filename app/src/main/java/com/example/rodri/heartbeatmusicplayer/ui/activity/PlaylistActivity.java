@@ -25,7 +25,7 @@ public class PlaylistActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist);
 
-        SongsManager sManager = new SongsManager();
+        old_SongsManager sManager = new old_SongsManager();
         this.songList = sManager.getPlaylist();
 
         // Create custom adapter
