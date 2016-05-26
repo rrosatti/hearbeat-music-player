@@ -26,7 +26,7 @@ public class SongsManager {
     }
 
     public ArrayList<Song> getPlaylist() {
-
+        songsList = new ArrayList<>();
         if (musicCursor != null && musicCursor.moveToFirst()) {
             // get columns
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);

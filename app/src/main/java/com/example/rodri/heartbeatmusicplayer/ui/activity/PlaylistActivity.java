@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
+import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
 import com.example.rodri.heartbeatmusicplayer.ui.adapter.SongAdapter;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class PlaylistActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist);
 
-        old_SongsManager sManager = new old_SongsManager();
+        SongsManager sManager = new SongsManager(PlaylistActivity.this);
         this.songList = sManager.getPlaylist();
 
         // Create custom adapter

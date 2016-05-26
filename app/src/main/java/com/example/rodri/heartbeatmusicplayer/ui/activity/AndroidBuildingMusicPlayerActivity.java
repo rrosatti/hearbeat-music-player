@@ -1,10 +1,13 @@
 package com.example.rodri.heartbeatmusicplayer.ui.activity;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.util.Utilities;
+import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
     private ImageButton btBackward;
     private ImageButton btNext;
     private ImageButton btPrevious;
-    private ImageButton btPlalist;
+    private ImageButton btPlaylist;
     private ImageButton btRepeat;
     private ImageButton btShuffle;
     private SeekBar songProgressBas;
@@ -41,7 +45,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
     private MediaPlayer mediaPlayer;
 
     private Handler handler = new Handler();
-    private old_SongsManager oldSongsManager;
+    private SongsManager songsManager;
+    //private old_SongsManager songsManager;
     private Utilities utils;
     private int seekForwardTime = 5000; // milliseconds
     private int seekBackwardTime = 5000;
@@ -61,7 +66,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         /**
          *  Open Playlist activity
          */
-        btPlalist.setOnClickListener(new View.OnClickListener() {
+        btPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent openPlayList = new Intent(getApplicationContext(), PlaylistActivity.class);
@@ -172,7 +177,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         btBackward = (ImageButton) findViewById(R.id.imgBackwards);
         btNext = (ImageButton) findViewById(R.id.imgNext);
         btPrevious = (ImageButton) findViewById(R.id.imgBack);
-        btPlalist = (ImageButton) findViewById(R.id.btPlaylist);
+        btPlaylist = (ImageButton) findViewById(R.id.btPlaylist);
         btRepeat = (ImageButton) findViewById(R.id.imgRepeat);
         btShuffle = (ImageButton) findViewById(R.id.imgShuffle);
         songProgressBas = (SeekBar) findViewById(R.id.progressBar);
@@ -181,14 +186,15 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         txtTotalDuration = (TextView) findViewById(R.id.txtTotalTime);
 
         mediaPlayer = new MediaPlayer();
-        oldSongsManager = new old_SongsManager();
+        songsManager = new SongsManager(AndroidBuildingMusicPlayerActivity.this);
+        //songsManager = new old_SongsManager();
         utils = new Utilities();
 
         // Listeners
         songProgressBas.setOnSeekBarChangeListener(this);
         mediaPlayer.setOnCompletionListener(this);
 
-        songsList = oldSongsManager.getPlaylist();
+        songsList = songsManager.getPlaylist();
     }
 
     /**
@@ -210,9 +216,14 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
     public void playSong(int songIndex) {
 
         try {
+            Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songIndex);
+
             mediaPlayer.reset();
-            mediaPlayer.setDataSource(songsList.get(songIndex).getPath());
-            mediaPlayer.prepare();
+
+            mediaPlayer.setDataSource(AndroidBuildingMusicPlayerActivity.this, trackUri);
+
+            System.out.println("Is that the error?");
+            mediaPlayer.prepareAsync();
             mediaPlayer.start();
 
             // Display song title

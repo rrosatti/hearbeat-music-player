@@ -32,7 +32,7 @@ public class old_SongsManager {
             for (File file : home.listFiles(new FileExtensionFilter())) {
                 Song song = new Song();
                 song.setTitle(file.getName().substring(0, (file.getName().length() - 4)));
-                song.setPath(file.getPath());
+                //song.setPath(file.getPath());
 
                 songList.add(song);
             }
