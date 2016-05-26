@@ -21,6 +21,8 @@ public class MusicService extends Service implements
     private ArrayList<Song> songsList;
     private int currentPos;
 
+    private final IBinder musicBind = new MusicBinder();
+
     public void onCreate() {
         super.onCreate();
         currentPos = 0;
@@ -40,7 +42,7 @@ public class MusicService extends Service implements
     }
 
     public class MusicBinder extends Binder {
-        MusicService getService() {
+        public MusicService getService() {
             return MusicService.this;
         }
     }
@@ -48,7 +50,14 @@ public class MusicService extends Service implements
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return musicBind;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        return false;
     }
 
     @Override
