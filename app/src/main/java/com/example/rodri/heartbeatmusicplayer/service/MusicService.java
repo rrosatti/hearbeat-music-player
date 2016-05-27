@@ -67,6 +67,10 @@ public class MusicService extends Service implements
         mediaPlayer.prepareAsync();
     }
 
+    public void stopSong() {
+        mediaPlayer.pause();
+    }
+
     public void setSong(int songIndex) {
         songPos = songIndex;
     }

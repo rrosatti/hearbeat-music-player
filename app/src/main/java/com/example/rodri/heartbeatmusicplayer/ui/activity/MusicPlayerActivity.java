@@ -48,6 +48,9 @@ public class MusicPlayerActivity extends Activity {
 
     private boolean isShuffle = false;
     private boolean isRepeat = false;
+    private boolean isPaused = true;
+
+    private int currentSongIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +162,31 @@ public class MusicPlayerActivity extends Activity {
             }
         });
 
+        btPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPaused) {
+                    if (currentSongIndex == 0) {
+                        musicService.setSong(0);
+                        musicService.playSong();
+                    } else {
+                        musicService.setSong(currentSongIndex);
+                        musicService.playSong();
+                    }
+                    btPlay.setImageResource(R.drawable.stop_button_states);
+                    isPaused = false;
+
+                } else {
+                    //stopService(playIntent);
+                    //musicService = null;
+                    musicService.stopSong();
+                    btPlay.setImageResource(R.drawable.play_button_states);
+                    isPaused = true;
+                }
+
+            }
+        });
+
     }
 
     public void initialize() {
@@ -189,9 +217,11 @@ public class MusicPlayerActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100) {
-            int currentSongIndex = data.getExtras().getInt("songIndex");
+            currentSongIndex = data.getExtras().getInt("songIndex");
             musicService.setSong(currentSongIndex);
             musicService.playSong();
+            isPaused = false;
+            btPlay.setImageResource(R.drawable.stop_button_pressed);
         }
     }
 
