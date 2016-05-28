@@ -49,8 +49,10 @@ public class MusicPlayerActivity extends Activity {
     private boolean isShuffle = false;
     private boolean isRepeat = false;
     private boolean isPaused = true;
+    private boolean isStarted = false;
 
     private int currentSongIndex = 0;
+    private int currentTimePos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,20 +168,26 @@ public class MusicPlayerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (isPaused) {
-                    if (currentSongIndex == 0) {
-                        musicService.setSong(0);
-                        musicService.playSong();
+                    if (isStarted) {
+                        musicService.continueSong(currentTimePos);
+                        System.out.println("I've been here! in position: " + currentTimePos);
                     } else {
-                        musicService.setSong(currentSongIndex);
-                        musicService.playSong();
+                        if (currentSongIndex == 0) {
+                            musicService.setSong(0);
+                            musicService.playSong();
+                        } else {
+                            musicService.setSong(currentSongIndex);
+                            musicService.playSong();
+                        }
                     }
+
                     btPlay.setImageResource(R.drawable.stop_button_states);
                     isPaused = false;
+                    isStarted = true;
 
                 } else {
-                    //stopService(playIntent);
-                    //musicService = null;
-                    musicService.stopSong();
+                    currentTimePos = musicService.getCurrentPosition();
+                    musicService.pauseSong();
                     btPlay.setImageResource(R.drawable.play_button_states);
                     isPaused = true;
                 }
@@ -221,6 +229,7 @@ public class MusicPlayerActivity extends Activity {
             musicService.setSong(currentSongIndex);
             musicService.playSong();
             isPaused = false;
+            isStarted = true;
             btPlay.setImageResource(R.drawable.stop_button_pressed);
         }
     }
