@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,13 +19,15 @@ import com.example.rodri.heartbeatmusicplayer.service.MusicService;
 import com.example.rodri.heartbeatmusicplayer.service.MusicService.MusicBinder;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
+import com.example.rodri.heartbeatmusicplayer.util.Utilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by rodri on 5/26/2016.
  */
-public class MusicPlayerActivity extends Activity {
+public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
 
     private MusicService musicService;
     private Intent playIntent;
@@ -53,6 +56,10 @@ public class MusicPlayerActivity extends Activity {
 
     private int currentSongIndex = 0;
     private int currentTimePos = 0;
+
+    private Handler handler = new Handler();
+    private Utilities utils = new Utilities();
+    public  boolean killThread = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +186,7 @@ public class MusicPlayerActivity extends Activity {
                             musicService.setSong(currentSongIndex);
                             musicService.playSong();
                         }
+                        displaySongInfoWhenPlayingMusic();
                     }
 
                     btPlay.setImageResource(R.drawable.stop_button_states);
@@ -224,14 +232,25 @@ public class MusicPlayerActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
+        if (requestCode == 100 && data != null) {
             currentSongIndex = data.getExtras().getInt("songIndex");
             musicService.setSong(currentSongIndex);
             musicService.playSong();
             isPaused = false;
             isStarted = true;
             btPlay.setImageResource(R.drawable.stop_button_pressed);
+            displaySongInfoWhenPlayingMusic();
         }
+    }
+
+    public void displaySongInfoWhenPlayingMusic() {
+        String songTitle = songList.get(currentSongIndex).getTitle();
+        txtSongTittle.setText(songTitle);
+
+        songProgressBas.setProgress(0);
+        songProgressBas.setMax(100);
+
+        updateProgressBar();
     }
 
     private ServiceConnection musicConnection = new ServiceConnection() {
@@ -268,8 +287,63 @@ public class MusicPlayerActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        killThread = true;
         stopService(playIntent);
         musicService = null;
         super.onDestroy();
+    }
+
+    /**
+     * Seek bar events/methods
+     * */
+
+    public void updateProgressBar() {
+        handler.postDelayed(updateTimeTask, 100);
+    }
+
+    private Runnable updateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            if (!killThread) {
+                long totalDuration = musicService.getSongDuration();
+                currentTimePos = musicService.getCurrentPosition();
+
+                // Set the Current and Total duration to TextView
+                txtTotalDuration.setText(""+utils.millisecondsToTimer(totalDuration));
+                txtCurrentDuration.setText(""+utils.millisecondsToTimer(currentTimePos));
+
+                // Updating progress bar
+                int progress = utils.getProgressPercentage(currentTimePos, totalDuration);
+                songProgressBas.setProgress(progress);
+
+                // Repeat this thread each 100 milliseconds
+                handler.postDelayed(this, 100);
+            }
+
+        }
+
+
+    };
+
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        handler.removeCallbacks(updateTimeTask);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        handler.removeCallbacks(updateTimeTask);
+        int totalDuration = musicService.getSongDuration();
+        currentTimePos = utils.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        musicService.continueSong(currentTimePos);
+
+        updateProgressBar();
     }
 }

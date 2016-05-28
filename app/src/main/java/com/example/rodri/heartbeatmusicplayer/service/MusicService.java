@@ -3,10 +3,12 @@ package com.example.rodri.heartbeatmusicplayer.service;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
@@ -35,6 +37,9 @@ public class MusicService extends Service implements
     }
 
     public void initMusicPlayer() {
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
@@ -78,6 +83,10 @@ public class MusicService extends Service implements
 
     public int getCurrentPosition() {
         return mediaPlayer.getCurrentPosition();
+    }
+
+    public int getSongDuration() {
+        return mediaPlayer.getDuration();
     }
 
     public void setSong(int songIndex) {

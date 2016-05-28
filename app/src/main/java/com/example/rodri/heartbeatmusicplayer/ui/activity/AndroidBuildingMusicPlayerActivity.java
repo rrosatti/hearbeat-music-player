@@ -61,7 +61,6 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
         setContentView(R.layout.player);
         initialize();
 
-        playSong(0);
 
         /**
          *  Open Playlist activity
@@ -206,8 +205,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && data != null) {
             currentSongIndex = data.getExtras().getInt("songIndex");
             playSong(currentSongIndex);
         }
