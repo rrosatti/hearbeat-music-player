@@ -23,6 +23,7 @@ import com.example.rodri.heartbeatmusicplayer.util.Utilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by rodri on 5/26/2016.
@@ -99,8 +100,6 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
 
                 }
 
-
-
             }
 
         });
@@ -122,7 +121,6 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
 
                 }
 
-                
             }
         });
 
@@ -131,21 +129,35 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             @Override
             public void onClick(View v) {
 
-                if (currentSongIndex < (songList.size() - 1)) {
-                    musicService.setSong(currentSongIndex + 1);
-                    musicService.playSong();
-                    currentSongIndex += 1;
+                if (!isShuffle) {
+                    if (currentSongIndex < (songList.size() - 1)) {
+                        musicService.setSong(currentSongIndex + 1);
+                        musicService.playSong();
+                        currentSongIndex += 1;
+                    } else {
+                        musicService.setSong(0);
+                        musicService.playSong();
+                        currentSongIndex = 0;
+                    }
+
+
                 } else {
-                    musicService.setSong(0);
+                    Random random = new Random();
+                    currentSongIndex  = random.nextInt((songList.size() - 1) + 1);
+                    musicService.setSong(currentSongIndex);
                     musicService.playSong();
-                    currentSongIndex = 0;
                 }
 
-                isStarted = true;
-                isPaused = false;
+
+                if (!isStarted) {
+                    isStarted = true;
+                    isPaused = false;
+                    btPlay.setImageResource(R.drawable.stop_button_states);
+                }
+
                 displaySongInfoWhenPlayingMusic();
                 updateProgressBar();
-                btPlay.setImageResource(R.drawable.stop_button_states);
+
 
             }
         });
@@ -178,11 +190,11 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             public void onClick(View v) {
                 if(isRepeat) {
                     isRepeat = false;
-                    Toast.makeText(getApplicationContext(), "Reapeat is OFF", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Reapeat is OFF", Toast.LENGTH_SHORT).show();
                     btRepeat.setImageResource(R.drawable.repeat_button);
                 } else {
                     isRepeat = true;
-                    Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
                     btRepeat.setImageResource(R.drawable.repeat_button_pressed);
 
                     isShuffle = false;
@@ -196,11 +208,11 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             public void onClick(View v) {
                 if(isShuffle) {
                     isShuffle = false;
-                    Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
                     btShuffle.setImageResource(R.drawable.shuffle_button);
                 } else {
-                    isRepeat = true;
-                    Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
+                    isShuffle = true;
+                    //Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
                     btShuffle.setImageResource(R.drawable.shuffle_button_pressed);
 
                     isRepeat = false;
@@ -342,7 +354,7 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
     private Runnable updateTimeTask = new Runnable() {
         @Override
         public void run() {
-            if (!killThread) {
+            if (!killThread && isStarted) {
                 long totalDuration = musicService.getSongDuration();
                 currentTimePos = musicService.getCurrentPosition();
 
