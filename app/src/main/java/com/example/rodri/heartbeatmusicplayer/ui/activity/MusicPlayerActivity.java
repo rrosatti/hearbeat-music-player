@@ -76,6 +76,7 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
                 startActivityForResult(openPlayList, 100);
             }
         });
+
         /**
         btForward.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,19 +104,28 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
                     mediaPlayer.seekTo(0);
                 }
             }
-        });
+        });*/
+
 
         btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (currentSongIndex < (songsList.size() - 1)) {
-                    playSong(currentSongIndex + 1);
+                if (currentSongIndex < (songList.size() - 1)) {
+                    musicService.setSong(currentSongIndex + 1);
+                    musicService.playSong();
                     currentSongIndex += 1;
                 } else {
-                    playSong(0);
+                    musicService.setSong(0);
+                    musicService.playSong();
                     currentSongIndex = 0;
                 }
+
+                isStarted = true;
+                isPaused = false;
+                displaySongInfoWhenPlayingMusic();
+                updateProgressBar();
+                btPlay.setImageResource(R.drawable.stop_button_states);
 
             }
         });
@@ -125,15 +135,23 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             public void onClick(View v) {
 
                 if (currentSongIndex > 0) {
-                    playSong(currentSongIndex - 1);
+                    musicService.setSong(currentSongIndex - 1);
+                    musicService.playSong();
                     currentSongIndex -= 1;
                 } else {
-                    playSong(songsList.size() - 1);
-                    currentSongIndex = songsList.size() - 1;
+                    musicService.setSong(songList.size() - 1);
+                    musicService.playSong();
+                    currentSongIndex = songList.size() - 1;
                 }
 
+                isStarted = true;
+                isPaused = false;
+                displaySongInfoWhenPlayingMusic();
+                updateProgressBar();
+                btPlay.setImageResource(R.drawable.stop_button_states);
+
             }
-        });*/
+        });
 
         btRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
