@@ -93,6 +93,10 @@ public class MusicService extends Service implements
         songPos = songIndex;
     }
 
+    public void seekTo(int time) {
+        mediaPlayer.seekTo(time);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

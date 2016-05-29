@@ -56,6 +56,8 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
 
     private int currentSongIndex = 0;
     private int currentTimePos = 0;
+    private int seekForwardTime = 5000; // milliseconds
+    private int seekBackwardTime = 5000; // milliseconds
 
     private Handler handler = new Handler();
     private Utilities utils = new Utilities();
@@ -77,34 +79,52 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             }
         });
 
-        /**
+
         btForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPos = mediaPlayer.getCurrentPosition();
 
-                if (currentPos + seekForwardTime <= mediaPlayer.getDuration()) {
-                    // forward song
-                    mediaPlayer.seekTo(currentPos + seekForwardTime);
-                } else {
-                    // forward to end
-                    mediaPlayer.seekTo(mediaPlayer.getDuration());
+                if(isStarted) {
+                    currentTimePos = musicService.getCurrentPosition();
+
+                    if (currentTimePos + seekForwardTime <= musicService.getSongDuration()) {
+                        // forward song
+                        musicService.seekTo(currentTimePos + seekForwardTime);
+                    } else {
+                        // forward to end
+                        musicService.seekTo(musicService.getSongDuration());
+                    }
+
+                    updateProgressBar();
+
                 }
+
+
+
             }
+
         });
 
         btBackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPos = mediaPlayer.getCurrentPosition();
 
-                if (currentPos - seekBackwardTime >= 0) {
-                    mediaPlayer.seekTo(currentPos - seekBackwardTime);
-                } else {
-                    mediaPlayer.seekTo(0);
+                if (isStarted) {
+                    currentTimePos = musicService.getCurrentPosition();
+
+                    if (currentTimePos - seekBackwardTime >= 0) {
+                        musicService.seekTo(currentTimePos - seekBackwardTime);
+                    } else {
+                        musicService.seekTo(0);
+                    }
+
+                    updateProgressBar();
+
                 }
+
+                
             }
-        });*/
+        });
 
 
         btNext.setOnClickListener(new View.OnClickListener() {
