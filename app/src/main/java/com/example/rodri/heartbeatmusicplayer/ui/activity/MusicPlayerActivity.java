@@ -28,7 +28,7 @@ import java.util.Random;
 /**
  * Created by rodri on 5/26/2016.
  */
-public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
+public class MusicPlayerActivity extends Activity{
 
     private MusicService musicService;
     private Intent playIntent;
@@ -253,6 +253,29 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
             }
         });
 
+        songProgressBas.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(updateTimeTask);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(updateTimeTask);
+                int totalDuration = musicService.getSongDuration();
+                currentTimePos = utils.progressToTimer(seekBar.getProgress(), totalDuration);
+
+                musicService.seekTo(currentTimePos);
+
+                updateProgressBar();
+            }
+        });
+
     }
 
     public void initialize() {
@@ -376,24 +399,4 @@ public class MusicPlayerActivity extends Activity implements SeekBar.OnSeekBarCh
     };
 
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        handler.removeCallbacks(updateTimeTask);
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        handler.removeCallbacks(updateTimeTask);
-        int totalDuration = musicService.getSongDuration();
-        currentTimePos = utils.progressToTimer(seekBar.getProgress(), totalDuration);
-
-        musicService.continueSong(currentTimePos);
-
-        updateProgressBar();
-    }
 }
