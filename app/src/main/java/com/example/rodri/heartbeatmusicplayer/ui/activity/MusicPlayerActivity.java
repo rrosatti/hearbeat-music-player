@@ -200,6 +200,8 @@ public class MusicPlayerActivity extends Activity{
                     isShuffle = false;
                     btShuffle.setImageResource(R.drawable.shuffle_button);
                 }
+
+                musicService.updateVariables(isRepeat, isShuffle);
             }
         });
 
@@ -218,6 +220,8 @@ public class MusicPlayerActivity extends Activity{
                     isRepeat = false;
                     btRepeat.setImageResource(R.drawable.repeat_button);
                 }
+
+                musicService.updateVariables(isRepeat, isShuffle);
             }
         });
 
@@ -325,6 +329,7 @@ public class MusicPlayerActivity extends Activity{
 
         updateProgressBar();
     }
+
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override

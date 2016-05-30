@@ -13,8 +13,10 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
 import com.example.rodri.heartbeatmusicplayer.song.Song;
+import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by rodri on 5/26/2016.
@@ -27,6 +29,9 @@ public class MusicService extends Service implements
     private int songPos;
 
     private final IBinder musicBind = new MusicBinder();
+
+    private boolean isRepeat = false;
+    private boolean isShuffle = false;
 
     public void onCreate() {
         super.onCreate();
@@ -97,6 +102,12 @@ public class MusicService extends Service implements
         mediaPlayer.seekTo(time);
     }
 
+    public void updateVariables(boolean isRepeat, boolean isShuffle) {
+        this.isRepeat = isRepeat;
+        this.isShuffle = isShuffle;
+    }
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -112,6 +123,28 @@ public class MusicService extends Service implements
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+
+        // if repeat is on, then the same song must be repeated
+        if (isRepeat) {
+            playSong();
+        } else if (isShuffle) { // is shuffle is on, then we need to random a new song
+            Random random = new Random();
+            songPos = random.nextInt((songsList.size() - 1) + 1);
+            playSong();
+        } else {
+
+            // play the next song, unless it is the last one.
+            if (songPos < (songsList.size() - 1)) {
+                setSong(songPos + 1);
+                playSong();
+                songPos += 1;
+            } else {
+                setSong(0);
+                playSong();
+                songPos = 0;
+            }
+
+        }
 
     }
 
