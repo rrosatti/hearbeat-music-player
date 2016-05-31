@@ -28,7 +28,7 @@ import java.util.Random;
 /**
  * Created by rodri on 5/26/2016.
  */
-public class MusicPlayerActivity extends Activity{
+public class MusicPlayerActivity extends Activity implements MusicService.ServiceCallbacks{
 
     private MusicService musicService;
     private Intent playIntent;
@@ -340,6 +340,7 @@ public class MusicPlayerActivity extends Activity{
 
             musicService.setList(songList);
             musicBound = true;
+            musicService.setCallbacks(MusicPlayerActivity.this);
         }
 
         @Override
@@ -355,6 +356,17 @@ public class MusicPlayerActivity extends Activity{
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (musicBound) {
+            musicService.setCallbacks(null);
+            unbindService(musicConnection);
+            musicBound = false;
         }
     }
 
@@ -404,4 +416,9 @@ public class MusicPlayerActivity extends Activity{
     };
 
 
+    @Override
+    public void updateMusicInfo() {
+        currentSongIndex = musicService.getSongPos();
+        displaySongInfoWhenPlayingMusic();
+    }
 }

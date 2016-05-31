@@ -33,12 +33,18 @@ public class MusicService extends Service implements
     private boolean isRepeat = false;
     private boolean isShuffle = false;
 
+    private ServiceCallbacks serviceCallbacks;
+
     public void onCreate() {
         super.onCreate();
         songPos = 0;
         mediaPlayer = new MediaPlayer();
 
         initMusicPlayer();
+    }
+
+    public interface ServiceCallbacks {
+        void updateMusicInfo();
     }
 
     public void initMusicPlayer() {
@@ -86,6 +92,10 @@ public class MusicService extends Service implements
         mediaPlayer.start();
     }
 
+    public int getSongPos() {
+        return songPos;
+    }
+
     public int getCurrentPosition() {
         return mediaPlayer.getCurrentPosition();
     }
@@ -112,6 +122,10 @@ public class MusicService extends Service implements
     @Override
     public IBinder onBind(Intent intent) {
         return musicBind;
+    }
+
+    public void setCallbacks(ServiceCallbacks callbacks) {
+        serviceCallbacks = callbacks;
     }
 
     @Override
@@ -144,6 +158,10 @@ public class MusicService extends Service implements
                 songPos = 0;
             }
 
+        }
+
+        if (serviceCallbacks != null) {
+            serviceCallbacks.updateMusicInfo();
         }
 
     }
