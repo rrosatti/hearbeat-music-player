@@ -2,7 +2,9 @@ package com.example.rodri.heartbeatmusicplayer.service;
 
 import android.app.Service;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
@@ -35,10 +38,20 @@ public class MusicService extends Service implements
 
     private ServiceCallbacks serviceCallbacks;
 
+    public static final String LASTSONG = "LastSong";
+    SharedPreferences sharedPreferences;
+
     public void onCreate() {
         super.onCreate();
         songPos = 0;
         mediaPlayer = new MediaPlayer();
+
+        sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
+
+        int temp = sharedPreferences.getInt("songPos", -1);
+        if (temp != -1) {
+            songPos = sharedPreferences.getInt("songPos", -1);
+        }
 
         initMusicPlayer();
     }
@@ -69,6 +82,10 @@ public class MusicService extends Service implements
     public void playSong() {
         mediaPlayer.reset();
         Song song = songsList.get(songPos);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("songPos", songPos);
+        editor.commit();
 
         long currSong = song.getId();
 

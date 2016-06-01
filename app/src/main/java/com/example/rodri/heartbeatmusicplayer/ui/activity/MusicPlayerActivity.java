@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -64,6 +65,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     private Utilities utils = new Utilities();
     public  boolean killThread = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +73,12 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         initialize();
 
         songList = manager.getPlaylist();
+
+        //int temp = musicService.getSongPos();
+        if (0 != 0) {
+            Toast.makeText(this, "temp: " + 0, Toast.LENGTH_SHORT).show();
+        }
+
 
         btPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -341,6 +349,12 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             musicService.setList(songList);
             musicBound = true;
             musicService.setCallbacks(MusicPlayerActivity.this);
+
+            int temp = musicService.getSongPos();
+            if (temp != -1) {
+                currentSongIndex = temp;
+                displaySongInfoWhenPlayingMusic();
+            }
         }
 
         @Override
@@ -356,6 +370,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
+
         }
     }
 
