@@ -2,10 +2,14 @@ package com.example.rodri.heartbeatmusicplayer.ui.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.database.SQLException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +28,9 @@ import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
 import com.example.rodri.heartbeatmusicplayer.util.Utilities;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -236,6 +242,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             @Override
             public void onClick(View v) {
                 if (isPaused) {
+                    killThread = false;
                     if (isStarted) {
                         musicService.continueSong(currentTimePos);
                         System.out.println("I've been here! in position: " + currentTimePos);
@@ -259,6 +266,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
                     musicService.pauseSong();
                     btPlay.setImageResource(R.drawable.play_button_states);
                     isPaused = true;
+                    killThread = true;
                 }
 
             }
@@ -338,7 +346,16 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         String albumUri = songList.get(currentSongIndex).getAlbumUri();
 
         if (albumUri != null) {
-            albumImg.setImageURI(Uri.parse(albumUri));
+            ContentResolver res = getContentResolver();
+            try {
+                // need to find a better way to verify it
+                InputStream in = res.openInputStream(Uri.parse(albumUri));
+                Bitmap temp = BitmapFactory.decodeStream(in);
+                albumImg.setImageURI(Uri.parse(albumUri));
+            } catch (FileNotFoundException e) {
+                albumImg.setImageResource(R.drawable.thumbnail);
+                e.printStackTrace();
+            }
         }
 
         updateProgressBar();
@@ -412,6 +429,12 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     @Override
     protected void onDestroy() {
         System.out.println("onDestroy() was called ------------------");
+        if (musicBound) {
+            musicService.setCallbacks(null);
+            unbindService(musicConnection);
+            musicBound = false;
+        }
+
         killThread = true;
         stopService(playIntent);
         musicService = null;
