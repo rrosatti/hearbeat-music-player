@@ -33,11 +33,24 @@ public class SongsManager {
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
 
+            int album_id = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            Cursor cursorAlbum = activity.managedQuery(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                    new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
+                    MediaStore.Audio.Albums._ID + "=" + album_id, null, null);
+
             do {
                 long id = musicCursor.getLong(idColumn);
                 String title = musicCursor.getString(titleColumn);
                 String artist = musicCursor.getString(artistColumn);
-                songsList.add(new Song(id, title, artist));
+                String uri = null;
+
+                if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
+                    uri = cursorAlbum.getString(cursorAlbum.getColumnIndex("album_art"));
+                    cursorAlbum.close();
+                }
+
+
+                songsList.add(new Song(id, title, artist, uri));
             } while (musicCursor.moveToNext());
 
         }

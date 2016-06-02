@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +52,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     private TextView txtSongTittle;
     private TextView txtCurrentDuration;
     private TextView txtTotalDuration;
+    private ImageView albumImg;
 
     private boolean isShuffle = false;
     private boolean isRepeat = false;
@@ -74,10 +77,6 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
         songList = manager.getPlaylist();
 
-        //int temp = musicService.getSongPos();
-        if (0 != 0) {
-            Toast.makeText(this, "temp: " + 0, Toast.LENGTH_SHORT).show();
-        }
 
 
         btPlaylist.setOnClickListener(new View.OnClickListener() {
@@ -303,6 +302,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         txtSongTittle = (TextView) findViewById(R.id.txtSongTitle);
         txtCurrentDuration = (TextView) findViewById(R.id.txtCurrentTime);
         txtTotalDuration = (TextView) findViewById(R.id.txtTotalTime);
+        albumImg = (ImageView) findViewById(R.id.imgThumbnail);
 
         manager = new SongsManager(this);
     }
@@ -335,6 +335,12 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         songProgressBas.setProgress(0);
         songProgressBas.setMax(100);
 
+        String albumUri = songList.get(currentSongIndex).getAlbumUri();
+
+        if (albumUri != null) {
+            albumImg.setImageURI(Uri.parse(albumUri));
+        }
+
         updateProgressBar();
     }
 
@@ -366,6 +372,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     @Override
     protected void onStart() {
         super.onStart();
+        System.out.println("onStart() was called ------------------");
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
@@ -377,11 +384,23 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (musicBound) {
+        System.out.println("onStop() was called ------------------");
+        /**if (musicBound) {
             musicService.setCallbacks(null);
             unbindService(musicConnection);
             musicBound = false;
+        }*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("onResume() was called ------------------");
+        if (playIntent == null) {
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+
         }
     }
 
@@ -392,6 +411,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     protected void onDestroy() {
+        System.out.println("onDestroy() was called ------------------");
         killThread = true;
         stopService(playIntent);
         musicService = null;
