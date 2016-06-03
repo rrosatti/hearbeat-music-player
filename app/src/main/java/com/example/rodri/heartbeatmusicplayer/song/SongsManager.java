@@ -3,6 +3,7 @@ package com.example.rodri.heartbeatmusicplayer.song;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  */
 public class SongsManager {
 
-    private Activity activity;
+    private Context activity;
     private ContentResolver musicResolver;
     private Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     private Cursor musicCursor;
@@ -22,7 +23,7 @@ public class SongsManager {
 
     private Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
 
-    public SongsManager(Activity activity) {
+    public SongsManager(Context activity) {
         this.activity = activity;
         this.musicResolver = activity.getContentResolver();
         this.musicCursor = musicResolver.query(musicUri, null, null, null, null);
