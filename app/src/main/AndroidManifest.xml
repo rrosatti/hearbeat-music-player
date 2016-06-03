@@ -24,6 +24,11 @@
         <activity android:name=".ui.activity.PlaylistActivity" />
 
         <service android:name=".service.MusicService" />
+
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/music_player_widget" />
+
     </application>
 
 </manifest>
