@@ -40,11 +40,17 @@ public class MusicPlayerWidgetProvider extends AppWidgetProvider {
             nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             PendingIntent nextPendingIntent = PendingIntent.getService(context, 0, nextIntent, 0);
 
+            // Intent when user click in the song title
+            Intent songTitleIntent = new Intent(context, MusicPlayerActivity.class);
+            songTitleIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            PendingIntent songTitlePendingIntent = PendingIntent.getActivity(context, 0, songTitleIntent, 0);
+
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
             remoteViews.setOnClickPendingIntent(R.id.imgWidgetPlay, playPendingIntent);
             remoteViews.setOnClickPendingIntent(R.id.imgWidgetNext, nextPendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.songTitleWidgetLinearLayout, songTitlePendingIntent);
 
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
 

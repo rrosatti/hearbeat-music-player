@@ -4,15 +4,26 @@
     android:layout_height="match_parent"
     android:background="@drawable/widget_shape">
 
-    <TextView
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:layout_width="0dp"
-        android:id="@+id/txtWidgetSongTitle"
-        android:text="@string/song_title"
-        android:textSize="8pt"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_weight="8"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/songTitleWidgetLinearLayout"
+        android:layout_weight="8">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:id="@+id/txtWidgetSongTitle"
+            android:text="@string/song_title"
+            android:textSize="8pt"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="8"/>
+
+    </LinearLayout>
+
+
 
     <ImageView
         android:layout_height="40dp"
