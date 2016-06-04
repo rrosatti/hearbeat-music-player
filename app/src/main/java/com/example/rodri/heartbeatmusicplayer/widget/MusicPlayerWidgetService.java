@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class MusicPlayerWidgetService extends Service implements MusicService.ServiceCallbacks {
 
     public static final String PLAYSONG = "PlaySong";
+    public static final String NEXTSONG = "NextSong";
 
     public static final String LASTSONG = "LastSong";
     SharedPreferences sharedPreferences;

@@ -28,22 +28,23 @@ public class MusicPlayerWidgetProvider extends AppWidgetProvider {
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         for (int  widgetId : allWidgetIds) {
 
-            Toast.makeText(context.getApplicationContext(), "onUpdate() was called!", Toast.LENGTH_SHORT).show();
+            // Intent related with Play button
+            Intent playIntent = new Intent(context, MusicPlayerWidgetService.class);
+            playIntent.setAction(MusicPlayerWidgetService.PLAYSONG);
+            playIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            PendingIntent playPendingIntent = PendingIntent.getService(context, 0, playIntent, 0);
 
-            // Register an onClickListener
+            // Intent related with Next button
+            Intent nextIntent = new Intent(context, MusicPlayerWidgetService.class);
+            nextIntent.setAction(MusicPlayerWidgetService.NEXTSONG);
+            nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            PendingIntent nextPendingIntent = PendingIntent.getService(context, 0, nextIntent, 0);
 
-            Intent intent = new Intent(context, MusicPlayerWidgetService.class);
-            intent.setAction(MusicPlayerWidgetService.PLAYSONG);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
 
-            //intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-
-            //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
-            remoteViews.setOnClickPendingIntent(R.id.imgWidgetPlay, pendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.imgWidgetPlay, playPendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.imgWidgetNext, nextPendingIntent);
 
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
