@@ -1,6 +1,8 @@
 package com.example.rodri.heartbeatmusicplayer.service;
 
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -13,10 +15,13 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
+import com.example.rodri.heartbeatmusicplayer.widget.MusicPlayerWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -98,6 +103,15 @@ public class MusicService extends Service implements
         }
 
         mediaPlayer.prepareAsync();
+
+        // Set song to the widget
+        ComponentName name = new ComponentName(getApplicationContext(), MusicPlayerWidgetProvider.class);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] ids = appWidgetManager.getAppWidgetIds(name);
+        System.out.println("ids count: " + ids.length);
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
+        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, song.getTitle());
+        appWidgetManager.updateAppWidget(ids[0], remoteViews);
     }
 
     public void pauseSong() {
