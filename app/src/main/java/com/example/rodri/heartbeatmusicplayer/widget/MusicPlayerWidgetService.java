@@ -63,23 +63,30 @@ public class MusicPlayerWidgetService extends Service implements MusicService.Se
         if (intent != null) {
             String requestedAction = intent.getAction();
 
-            if (requestedAction != null && requestedAction.equals(PLAYSONG)) {
-                int temp = sharedPreferences.getInt("songPos", -1);
-                if (temp != -1) {
-                    songPos = temp;
-                    songs = manager.getPlaylist();
-                    String title = songs.get(temp).getTitle();
+            if (requestedAction != null) {
 
-                    Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
+                if (requestedAction.equals(PLAYSONG)) {
 
-                    int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
-                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                    RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
-                    remoteViews.setTextViewText(R.id.txtWidgetSongTitle, title);
-                    appWidgetManager.updateAppWidget(widgetId, remoteViews);
+                    int temp = sharedPreferences.getInt("songPos", -1);
+                    if (temp != -1) {
+                        songPos = temp;
+                        songs = manager.getPlaylist();
+                        String title = songs.get(temp).getTitle();
+
+                        Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
+
+                        int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+                        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+                        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
+                        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, title);
+                        appWidgetManager.updateAppWidget(widgetId, remoteViews);
+
+                    }
+                    Toast.makeText(getApplicationContext(), "The song will be played!", Toast.LENGTH_SHORT).show();
+
+                } else if (requestedAction.equals(NEXTSONG)) {
 
                 }
-                Toast.makeText(getApplicationContext(), "The song will be played!", Toast.LENGTH_SHORT).show();
             }
         }
     }

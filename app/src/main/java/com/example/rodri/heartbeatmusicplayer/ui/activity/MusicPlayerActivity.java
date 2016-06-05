@@ -74,6 +74,9 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     private Utilities utils = new Utilities();
     public  boolean killThread = false;
 
+    public static final String LASTSONG = "LastSong";
+    private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,19 +204,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         btRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRepeat) {
-                    isRepeat = false;
-                    //Toast.makeText(getApplicationContext(), "Reapeat is OFF", Toast.LENGTH_SHORT).show();
-                    btRepeat.setImageResource(R.drawable.repeat_button);
-                } else {
-                    isRepeat = true;
-                    //Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
-                    btRepeat.setImageResource(R.drawable.repeat_button_pressed);
-
-                    isShuffle = false;
-                    btShuffle.setImageResource(R.drawable.shuffle_button);
-                }
-
+                updateRepeatButton();
                 musicService.updateVariables(isRepeat, isShuffle);
             }
         });
@@ -221,19 +212,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         btShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isShuffle) {
-                    isShuffle = false;
-                    //Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
-                    btShuffle.setImageResource(R.drawable.shuffle_button);
-                } else {
-                    isShuffle = true;
-                    //Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
-                    btShuffle.setImageResource(R.drawable.shuffle_button_pressed);
-
-                    isRepeat = false;
-                    btRepeat.setImageResource(R.drawable.repeat_button);
-                }
-
+                updateShuffleButton();
                 musicService.updateVariables(isRepeat, isShuffle);
             }
         });
@@ -313,6 +292,61 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         albumImg = (ImageView) findViewById(R.id.imgThumbnail);
 
         manager = new SongsManager(this);
+
+        sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
+
+        isRepeat = sharedPreferences.getBoolean("isRepeat", false);
+        isShuffle = sharedPreferences.getBoolean("isShuffle", false);
+        int tempSongPos = sharedPreferences.getInt("songPos", -1);
+
+        if (tempSongPos != -1) {
+            currentSongIndex = tempSongPos;
+        }
+
+        Toast.makeText(getApplicationContext(), "isRepeat: " + isRepeat, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "isShuffle: " + isShuffle, Toast.LENGTH_SHORT).show();
+
+        if (isShuffle) {
+            // need to set as false, because of the previous implementation for btSuffle.onClick()
+            isShuffle = false;
+            updateShuffleButton();
+        }
+        if (isRepeat) {
+            // need to set as false, because of the previous implementation for btSuffle.onClick()
+            isRepeat = false;
+            updateRepeatButton();
+        }
+
+    }
+
+    public void updateShuffleButton() {
+        if(isShuffle) {
+            isShuffle = false;
+            //Toast.makeText(getApplicationContext(), "Shuffle is OFF", Toast.LENGTH_SHORT).show();
+            btShuffle.setImageResource(R.drawable.shuffle_button);
+        } else {
+            isShuffle = true;
+            //Toast.makeText(getApplicationContext(), "Shuffle is ON", Toast.LENGTH_SHORT).show();
+            btShuffle.setImageResource(R.drawable.shuffle_button_pressed);
+
+            isRepeat = false;
+            btRepeat.setImageResource(R.drawable.repeat_button);
+        }
+    }
+
+    public void updateRepeatButton() {
+        if(isRepeat) {
+            isRepeat = false;
+            //Toast.makeText(getApplicationContext(), "Reapeat is OFF", Toast.LENGTH_SHORT).show();
+            btRepeat.setImageResource(R.drawable.repeat_button);
+        } else {
+            isRepeat = true;
+            //Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
+            btRepeat.setImageResource(R.drawable.repeat_button_pressed);
+
+            isShuffle = false;
+            btShuffle.setImageResource(R.drawable.shuffle_button);
+        }
     }
 
     /**

@@ -53,8 +53,10 @@ public class MusicService extends Service implements
 
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
 
-        int temp = sharedPreferences.getInt("songPos", -1);
-        if (temp != -1) {
+        int tempSongPos = sharedPreferences.getInt("songPos", -1);
+        isRepeat = sharedPreferences.getBoolean("isRepeat", false);
+        isShuffle = sharedPreferences.getBoolean("isShuffle", false);
+        if (tempSongPos != -1) {
             songPos = sharedPreferences.getInt("songPos", -1);
         }
 
@@ -146,6 +148,11 @@ public class MusicService extends Service implements
     public void updateVariables(boolean isRepeat, boolean isShuffle) {
         this.isRepeat = isRepeat;
         this.isShuffle = isShuffle;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isRepeat", isRepeat);
+        editor.putBoolean("isShuffle", isShuffle);
+        editor.commit();
     }
 
 
