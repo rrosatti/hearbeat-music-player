@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Created by rodri on 6/3/2016.
  */
-public class MusicPlayerWidgetService extends Service implements MusicService.ServiceCallbacks {
+public class MusicPlayerWidgetService extends MusicService implements MusicService.ServiceCallbacks {
 
 
     public static final String PLAYSONG = "PlaySong";
