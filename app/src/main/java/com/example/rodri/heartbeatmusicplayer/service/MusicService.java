@@ -32,6 +32,8 @@ import java.util.Random;
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener{
 
+    public static boolean isServiceStarted = false;
+
     private MediaPlayer mediaPlayer;
     private ArrayList<Song> songsList;
     private int songPos;
@@ -50,6 +52,8 @@ public class MusicService extends Service implements
         super.onCreate();
         songPos = 0;
         mediaPlayer = new MediaPlayer();
+        isServiceStarted = true;
+        Toast.makeText(getApplicationContext(), "Service is started -> " + isServiceStarted, Toast.LENGTH_SHORT).show();
 
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
 

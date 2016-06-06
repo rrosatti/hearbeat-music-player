@@ -303,16 +303,16 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             currentSongIndex = tempSongPos;
         }
 
-        Toast.makeText(getApplicationContext(), "isRepeat: " + isRepeat, Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "isShuffle: " + isShuffle, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "isRepeat: " + isRepeat, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "isShuffle: " + isShuffle, Toast.LENGTH_SHORT).show();
 
         if (isShuffle) {
-            // need to set as false, because of the previous implementation for btSuffle.onClick()
+            // need to set as false, because of the previous implementation for btShuffle.onClick()
             isShuffle = false;
             updateShuffleButton();
         }
         if (isRepeat) {
-            // need to set as false, because of the previous implementation for btSuffle.onClick()
+            // need to set as false, because of the previous implementation for btRepeat.onClick()
             isRepeat = false;
             updateRepeatButton();
         }
@@ -451,7 +451,6 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
-
         }
     }
 
@@ -471,6 +470,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
         killThread = true;
         stopService(playIntent);
+        musicService.isServiceStarted = false;
         musicService = null;
         super.onDestroy();
     }

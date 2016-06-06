@@ -25,15 +25,19 @@ import java.util.ArrayList;
  */
 public class MusicPlayerWidgetService extends Service implements MusicService.ServiceCallbacks {
 
+
     public static final String PLAYSONG = "PlaySong";
     public static final String NEXTSONG = "NextSong";
 
     public static final String LASTSONG = "LastSong";
+
     SharedPreferences sharedPreferences;
     private int songPos = 0;
     private MusicService musicService;
     private SongsManager manager;
     private ArrayList<Song> songs;
+    private Intent playIntent = null;
+
 
     public MusicPlayerWidgetService() {
 
@@ -46,12 +50,28 @@ public class MusicPlayerWidgetService extends Service implements MusicService.Se
         manager = new SongsManager(MusicPlayerWidgetService.this);
 
         songs = new ArrayList<>();
+
+        if (playIntent == null) {
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, widgetConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+            Toast.makeText(getApplicationContext(), "I was here!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStart(intent, startId);
 
+        Toast.makeText(getApplicationContext(), "I was here 2!", Toast.LENGTH_SHORT).show();
+        musicService.playSong();
         playSong(intent);
 
         stopSelf(startId);
@@ -83,7 +103,8 @@ public class MusicPlayerWidgetService extends Service implements MusicService.Se
 
                     }
                     Toast.makeText(getApplicationContext(), "The song will be played!", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "Service is started -> " + musicService.isServiceStarted, Toast.LENGTH_SHORT).show();
+                    //musicService.playSong();
                 } else if (requestedAction.equals(NEXTSONG)) {
 
                 }
