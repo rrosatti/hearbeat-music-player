@@ -17,11 +17,13 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rodri.heartbeatmusicplayer.R;
+import com.example.rodri.heartbeatmusicplayer.controller.MusicController;
 import com.example.rodri.heartbeatmusicplayer.service.MusicService;
 import com.example.rodri.heartbeatmusicplayer.service.MusicService.MusicBinder;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
@@ -37,7 +39,7 @@ import java.util.Random;
 /**
  * Created by rodri on 5/26/2016.
  */
-public class MusicPlayerActivity extends Activity implements MusicService.ServiceCallbacks{
+public class MusicPlayerActivity extends Activity implements MusicService.ServiceCallbacks, MediaController.MediaPlayerControl{
 
     private MusicService musicService;
     private Intent playIntent;
@@ -77,12 +79,16 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     public static final String LASTSONG = "LastSong";
     private SharedPreferences sharedPreferences;
 
+    private MusicController musicController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
         initialize();
+
+        setController();
 
         songList = manager.getPlaylist();
 
@@ -502,5 +508,92 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     public void updateMusicInfo() {
         currentSongIndex = musicService.getSongPos();
         displaySongInfoWhenPlayingMusic();
+    }
+
+    /**
+     *
+     * Methods for Media Player Control
+     *
+     */
+
+    private void setController() {
+        musicController = new MusicController(this);
+
+        musicController.setMediaPlayer(this);
+        musicController.setEnabled(true);
+
+
+        musicController.setPrevNextListeners(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        playNext();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        playPrev();
+                    }
+                }
+
+        );
+
+
+
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return 0;
+    }
+
+    @Override
+    public void seekTo(int pos) {
+
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return false;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
     }
 }
