@@ -435,12 +435,6 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     @Override
     protected void onStop() {
         super.onStop();
-        System.out.println("onStop() was called ------------------");
-        /**if (musicBound) {
-            musicService.setCallbacks(null);
-            unbindService(musicConnection);
-            musicBound = false;
-        }*/
     }
 
     @Override
