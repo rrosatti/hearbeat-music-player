@@ -98,11 +98,6 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
 
                 } else if (requestedAction.equals(NEXTSONG)) {
-                    LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View v = inflater.inflate(R.layout.widget_layout, null);
-
-                    ImageView pause = (ImageView) v.findViewById(R.id.imgWidgetPlay);
-                    pause.setImageResource(R.drawable.stop_button);
                 }
             }
         }
