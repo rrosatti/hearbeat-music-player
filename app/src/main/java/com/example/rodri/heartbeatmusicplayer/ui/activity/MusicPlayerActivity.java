@@ -454,10 +454,6 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         }
     }
 
-    public void songPicked(View view) {
-        musicService.setSong(Integer.parseInt(view.getTag().toString()));
-        musicService.playSong();
-    }
 
     @Override
     protected void onDestroy() {

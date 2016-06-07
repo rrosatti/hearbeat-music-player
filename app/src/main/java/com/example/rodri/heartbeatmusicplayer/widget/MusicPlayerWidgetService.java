@@ -1,6 +1,5 @@
 package com.example.rodri.heartbeatmusicplayer.widget;
 
-import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,6 +8,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -16,7 +18,6 @@ import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.service.MusicService;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
-import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,8 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     private ArrayList<Song> songs = new ArrayList<>();;
     private Intent playIntent = null;
 
+    private boolean isStarted = false;
+
 
     public MusicPlayerWidgetService() {
 
@@ -53,7 +56,6 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, widgetConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
-            Toast.makeText(getApplicationContext(), "I was here!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -62,8 +64,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStart(intent, startId);
 
-        Toast.makeText(getApplicationContext(), "I was here 2!", Toast.LENGTH_SHORT).show();
-        playSong(intent);
+        checkAction(intent);
 
         stopSelf(startId);
 
@@ -72,7 +73,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
 
 
-    public void playSong(Intent intent) {
+    public void checkAction(Intent intent) {
         if (intent != null) {
             String requestedAction = intent.getAction();
 
@@ -80,30 +81,56 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
                 if (requestedAction.equals(PLAYSONG)) {
 
-                    int temp = sharedPreferences.getInt("songPos", -1);
-                    if (temp != -1) {
-                        songPos = temp;
-                        songs = manager.getPlaylist();
-                        String title = songs.get(temp).getTitle();
+                    LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View v = inflater.inflate(R.layout.widget_layout, null);
 
-                        Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
+                    ImageView pause = (ImageView) v.findViewById(R.id.imgWidgetPlay);
+                    pause.setImageResource(R.drawable.stop_button);
 
-                        int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
-                        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
-                        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, title);
-                        appWidgetManager.updateAppWidget(widgetId, remoteViews);
+                    if (isStarted) {
 
+
+
+                        pauseSong();
+                    } else {
+                        playSong(intent);
                     }
-                    Toast.makeText(getApplicationContext(), "The song will be played!", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getApplicationContext(), "Service is started -> " + musicService.isServiceStarted, Toast.LENGTH_SHORT).show();
-                    setList(songs);
-                    playSong();
-                } else if (requestedAction.equals(NEXTSONG)) {
 
+
+                } else if (requestedAction.equals(NEXTSONG)) {
+                    LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View v = inflater.inflate(R.layout.widget_layout, null);
+
+                    ImageView pause = (ImageView) v.findViewById(R.id.imgWidgetPlay);
+                    pause.setImageResource(R.drawable.stop_button);
                 }
             }
         }
+    }
+
+    public void playSong(Intent intent) {
+        int temp = sharedPreferences.getInt("songPos", -1);
+        if (temp != -1) {
+            songPos = temp;
+        } else {
+            songPos = 0;
+        }
+        isStarted = true;
+
+        songs = manager.getPlaylist();
+        String title = songs.get(temp).getTitle();
+
+        Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
+
+        int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
+        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, title);
+        remoteViews.setImageViewResource(R.id.imgWidgetPlay, R.drawable.stop_button);
+        appWidgetManager.updateAppWidget(widgetId, remoteViews);
+
+        setList(songs);
+        playSong();
     }
 
     @Nullable
