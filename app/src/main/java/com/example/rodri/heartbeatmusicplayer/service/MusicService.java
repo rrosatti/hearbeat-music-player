@@ -53,7 +53,7 @@ public class MusicService extends Service implements
         songPos = 0;
         mediaPlayer = new MediaPlayer();
         isServiceStarted = true;
-        Toast.makeText(getApplicationContext(), "Service is started -> " + isServiceStarted, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Service is started -> ?" + isServiceStarted, Toast.LENGTH_SHORT).show();
 
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,8 @@ public class SongsManager {
     public ArrayList<Song> getPlaylist() {
         songsList = new ArrayList<>();
         if (musicCursor != null && musicCursor.moveToFirst()) {
+            Toast.makeText(activity, "I was surely here!", Toast.LENGTH_SHORT).show();
+            System.out.println("I was surely here!");
             // get columns
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);

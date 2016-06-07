@@ -35,7 +35,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     private int songPos = 0;
     private MusicService musicService;
     private SongsManager manager;
-    private ArrayList<Song> songs;
+    private ArrayList<Song> songs = new ArrayList<>();;
     private Intent playIntent = null;
 
 
@@ -49,8 +49,6 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
         manager = new SongsManager(MusicPlayerWidgetService.this);
 
-        songs = new ArrayList<>();
-
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, widgetConnection, Context.BIND_AUTO_CREATE);
@@ -59,25 +57,20 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         }
     }
 
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-
-
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStart(intent, startId);
 
         Toast.makeText(getApplicationContext(), "I was here 2!", Toast.LENGTH_SHORT).show();
-        musicService.playSong();
         playSong(intent);
 
         stopSelf(startId);
 
         return START_STICKY;
     }
+
+
 
     public void playSong(Intent intent) {
         if (intent != null) {
@@ -104,7 +97,8 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
                     }
                     Toast.makeText(getApplicationContext(), "The song will be played!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(), "Service is started -> " + musicService.isServiceStarted, Toast.LENGTH_SHORT).show();
-                    //musicService.playSong();
+                    setList(songs);
+                    playSong();
                 } else if (requestedAction.equals(NEXTSONG)) {
 
                 }
