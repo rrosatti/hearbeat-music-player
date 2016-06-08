@@ -314,7 +314,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     }
 
     public void playNext() {
-        
+
         if (!isShuffle) {
             if (currentSongIndex < (songList.size() - 1)) {
                 musicService.setSong(currentSongIndex + 1);
@@ -555,17 +555,23 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     public void start() {
-
+        musicService.go();
     }
 
     @Override
     public void pause() {
-
+        musicService.pauseSong();
     }
 
     @Override
     public int getDuration() {
-        return 0;
+
+        if (musicService != null && musicBound && musicService.isPlaying()) {
+            return musicService.getSongDuration();
+        } else {
+            return 0;
+        }
+
     }
 
     @Override
@@ -575,12 +581,16 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     public void seekTo(int pos) {
-
+        musicService.seekTo(pos);
     }
 
     @Override
     public boolean isPlaying() {
-        return false;
+        if (musicService != null && musicBound) {
+            return musicService.isPlaying();
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -590,21 +600,27 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     public boolean canPause() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canSeekBackward() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canSeekForward() {
-        return false;
+        return true;
     }
 
     @Override
     public int getAudioSessionId() {
-        return 0;
+
+        if (musicService != null && musicBound && musicService.isPlaying()) {
+            return musicService.getSongPos();
+        } else {
+            return 0;
+        }
+
     }
 }
