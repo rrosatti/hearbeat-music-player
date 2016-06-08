@@ -66,6 +66,8 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     private boolean isRepeat = false;
     private boolean isPaused = true;
     private boolean isStarted = false;
+    private boolean isLeavingApp = false;
+    private boolean playbackPaused = false;
 
     private int currentSongIndex = 0;
     private int currentTimePos = 0;
@@ -198,6 +200,8 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
                             musicService.playSong();
                         }
                         displaySongInfoWhenPlayingMusic();
+                        //Add after Controller implementation
+                        isPlaybackPaused();
                     }
 
                     btPlay.setImageResource(R.drawable.stop_button_states);
@@ -344,6 +348,9 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         displaySongInfoWhenPlayingMusic();
         updateProgressBar();
 
+        // Add after Controller implementation
+        isPlaybackPaused();
+
     }
 
     public void playPrev() {
@@ -363,6 +370,9 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         displaySongInfoWhenPlayingMusic();
         updateProgressBar();
         btPlay.setImageResource(R.drawable.stop_button_states);
+
+        // Add after Controller implementation
+        isPlaybackPaused();
 
     }
 
@@ -384,6 +394,9 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             isStarted = true;
             btPlay.setImageResource(R.drawable.stop_button_pressed);
             displaySongInfoWhenPlayingMusic();
+
+            //Add after Controller implementation
+            isPlaybackPaused();
         }
     }
 
@@ -450,8 +463,16 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        isLeavingApp = true;
+    }
+
+    @Override
     protected void onStop() {
+        musicController.hide();
         super.onStop();
+
     }
 
     @Override
@@ -462,7 +483,14 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
+
+            if(isLeavingApp) {
+                setController();
+                isLeavingApp = false;
+            }
+
         }
+
     }
 
 
@@ -560,6 +588,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     public void pause() {
+        playbackPaused = true;
         musicService.pauseSong();
     }
 
@@ -623,4 +652,14 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         }
 
     }
+
+    public void isPlaybackPaused() {
+        if (playbackPaused) {
+            setController();
+            playbackPaused = false;
+        }
+        musicController.show(0);
+    }
+
+
 }
