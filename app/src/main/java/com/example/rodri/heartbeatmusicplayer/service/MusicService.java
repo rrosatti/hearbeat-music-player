@@ -141,6 +141,15 @@ public class MusicService extends Service implements
         return mediaPlayer.getDuration();
     }
 
+    // Add after the Controller implementation
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+
+    public void go() {
+        mediaPlayer.start();
+    }
+
     public void setSong(int songIndex) {
         songPos = songIndex;
     }

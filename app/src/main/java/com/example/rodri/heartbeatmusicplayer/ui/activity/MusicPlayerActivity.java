@@ -151,35 +151,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             @Override
             public void onClick(View v) {
 
-                if (!isShuffle) {
-                    if (currentSongIndex < (songList.size() - 1)) {
-                        musicService.setSong(currentSongIndex + 1);
-                        musicService.playSong();
-                        currentSongIndex += 1;
-                    } else {
-                        musicService.setSong(0);
-                        musicService.playSong();
-                        currentSongIndex = 0;
-                    }
-
-
-                } else {
-                    Random random = new Random();
-                    currentSongIndex  = random.nextInt((songList.size() - 1) + 1);
-                    musicService.setSong(currentSongIndex);
-                    musicService.playSong();
-                }
-
-
-                if (!isStarted) {
-                    isStarted = true;
-                    isPaused = false;
-                    btPlay.setImageResource(R.drawable.stop_button_states);
-                }
-
-                displaySongInfoWhenPlayingMusic();
-                updateProgressBar();
-
+            playNext();
 
             }
         });
@@ -188,21 +160,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             @Override
             public void onClick(View v) {
 
-                if (currentSongIndex > 0) {
-                    musicService.setSong(currentSongIndex - 1);
-                    musicService.playSong();
-                    currentSongIndex -= 1;
-                } else {
-                    musicService.setSong(songList.size() - 1);
-                    musicService.playSong();
-                    currentSongIndex = songList.size() - 1;
-                }
-
-                isStarted = true;
-                isPaused = false;
-                displaySongInfoWhenPlayingMusic();
-                updateProgressBar();
-                btPlay.setImageResource(R.drawable.stop_button_states);
+                playPrev();
 
             }
         });
@@ -353,6 +311,59 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             isShuffle = false;
             btShuffle.setImageResource(R.drawable.shuffle_button);
         }
+    }
+
+    public void playNext() {
+        
+        if (!isShuffle) {
+            if (currentSongIndex < (songList.size() - 1)) {
+                musicService.setSong(currentSongIndex + 1);
+                musicService.playSong();
+                currentSongIndex += 1;
+            } else {
+                musicService.setSong(0);
+                musicService.playSong();
+                currentSongIndex = 0;
+            }
+
+
+        } else {
+            Random random = new Random();
+            currentSongIndex  = random.nextInt((songList.size() - 1) + 1);
+            musicService.setSong(currentSongIndex);
+            musicService.playSong();
+        }
+
+
+        if (!isStarted) {
+            isStarted = true;
+            isPaused = false;
+            btPlay.setImageResource(R.drawable.stop_button_states);
+        }
+
+        displaySongInfoWhenPlayingMusic();
+        updateProgressBar();
+
+    }
+
+    public void playPrev() {
+
+        if (currentSongIndex > 0) {
+            musicService.setSong(currentSongIndex - 1);
+            musicService.playSong();
+            currentSongIndex -= 1;
+        } else {
+            musicService.setSong(songList.size() - 1);
+            musicService.playSong();
+            currentSongIndex = songList.size() - 1;
+        }
+
+        isStarted = true;
+        isPaused = false;
+        displaySongInfoWhenPlayingMusic();
+        updateProgressBar();
+        btPlay.setImageResource(R.drawable.stop_button_states);
+
     }
 
     /**
