@@ -32,7 +32,7 @@ import java.util.Random;
  * Created by rodri on 5/26/2016.
  */
 public class MusicService extends Service implements
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener{
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener{
 
     public static boolean isServiceStarted = false;
     private static final int NOTIFY_ID = 1;
@@ -60,6 +60,13 @@ public class MusicService extends Service implements
         isServiceStarted = true;
         Toast.makeText(getApplicationContext(), "Service is started -> ?" + isServiceStarted, Toast.LENGTH_SHORT).show();
 
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            Toast.makeText(getApplicationContext(), "Could not get audio focus!", Toast.LENGTH_SHORT).show();
+        }
+
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
 
         int tempSongPos = sharedPreferences.getInt("songPos", -1);
@@ -70,6 +77,11 @@ public class MusicService extends Service implements
         }
 
         initMusicPlayer();
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        
     }
 
 
@@ -196,6 +208,7 @@ public class MusicService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
 
+        mediaPlayer.reset();
         // if repeat is on, then the same song must be repeated
         if (isRepeat) {
             playSong();
@@ -226,6 +239,7 @@ public class MusicService extends Service implements
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        mediaPlayer.reset();
         return false;
     }
 
@@ -256,4 +270,5 @@ public class MusicService extends Service implements
     public void onDestroy() {
         stopForeground(true);
     }
+
 }

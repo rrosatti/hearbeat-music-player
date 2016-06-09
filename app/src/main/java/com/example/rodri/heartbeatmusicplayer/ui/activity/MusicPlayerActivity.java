@@ -464,8 +464,9 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     protected void onPause() {
-        super.onPause();
+        musicService.pauseSong();
         isLeavingApp = true;
+        super.onPause();
     }
 
     @Override
