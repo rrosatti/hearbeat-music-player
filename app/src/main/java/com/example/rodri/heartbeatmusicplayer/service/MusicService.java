@@ -81,7 +81,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        
+
     }
 
 

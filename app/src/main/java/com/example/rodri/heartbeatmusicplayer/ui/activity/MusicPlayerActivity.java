@@ -485,11 +485,12 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
 
-            if(isLeavingApp) {
-                setController();
-                isLeavingApp = false;
-            }
 
+        }
+
+        if(isLeavingApp) {
+            setController();
+            isLeavingApp = false;
         }
 
     }
@@ -560,6 +561,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         musicController = new MusicController(this);
 
         musicController.setMediaPlayer(this);
+       // musicController.setAnchorView(findViewById(R.id.imgThumbnail));
         musicController.setEnabled(true);
 
 
@@ -577,6 +579,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
                 }
 
         );
+
 
 
 
