@@ -434,7 +434,6 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
 
     @Override
     protected void onStop() {
-        killThread = true;
         super.onStop();
     }
 

@@ -1,5 +1,7 @@
 package com.example.rodri.heartbeatmusicplayer.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -33,10 +35,12 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener{
 
     public static boolean isServiceStarted = false;
+    private static final int NOTIFY_ID = 1;
 
     private MediaPlayer mediaPlayer;
     private ArrayList<Song> songsList;
     private int songPos;
+    private String songTitle;
 
     private final IBinder musicBind = new MusicBinder();
 
@@ -93,6 +97,7 @@ public class MusicService extends Service implements
     public void playSong() {
         mediaPlayer.reset();
         Song song = songsList.get(songPos);
+        songTitle = song.getTitle();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("songPos", songPos);
@@ -116,7 +121,7 @@ public class MusicService extends Service implements
         int[] ids = appWidgetManager.getAppWidgetIds(name);
         System.out.println("ids count: " + ids.length);
         RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
-        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, song.getTitle());
+        remoteViews.setTextViewText(R.id.txtWidgetSongTitle, songTitle);
         appWidgetManager.updateAppWidget(ids[0], remoteViews);
     }
 
@@ -216,5 +221,27 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+
+        Intent intent = new Intent(this, MusicPlayerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(this);
+
+        builder.setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.playlist_button_pressed)
+                .setTicker(songTitle)
+                .setOngoing(true)
+                .setContentTitle("Playing")
+                .setContentText(songTitle);
+        Notification notification = builder.build();
+
+        startForeground(NOTIFY_ID, notification);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        stopForeground(true);
     }
 }
