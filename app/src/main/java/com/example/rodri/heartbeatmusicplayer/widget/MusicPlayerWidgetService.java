@@ -39,7 +39,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     private ArrayList<Song> songs = new ArrayList<>();;
     private Intent playIntent = null;
 
-    private boolean isStarted = false;
+    private boolean musicBound = false;
 
 
     public MusicPlayerWidgetService() {
@@ -52,11 +52,16 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
         manager = new SongsManager(MusicPlayerWidgetService.this);
 
-        if (playIntent == null) {
+        songs = manager.getPlaylist();
+        setList(songs);
+
+        /**if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, widgetConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
-        }
+            Toast.makeText(getApplicationContext(), "I've been here 1!", Toast.LENGTH_SHORT).show();
+            System.out.println("I've been here 1!");
+        }*/
     }
 
 
@@ -64,11 +69,14 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStart(intent, startId);
 
+        Toast.makeText(getApplicationContext(), "I've been here 2!", Toast.LENGTH_SHORT).show();
+        System.out.println("I've been here 2!");
+
         checkAction(intent);
 
         stopSelf(startId);
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
 
@@ -86,13 +94,12 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
                     ImageView pause = (ImageView) v.findViewById(R.id.imgWidgetPlay);
                     pause.setImageResource(R.drawable.stop_button);
-
-                    if (isStarted) {
-
-
-
-                        pauseSong();
+                    System.out.println("I've been here 5!");
+                    if (isPlaying()) {
+                        Toast.makeText(getApplicationContext(), "pause", Toast.LENGTH_SHORT).show();
+                        pauseSong(intent);
                     } else {
+                        Toast.makeText(getApplicationContext(), "playing", Toast.LENGTH_SHORT).show();
                         playSong(intent);
                     }
 
@@ -110,9 +117,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         } else {
             songPos = 0;
         }
-        isStarted = true;
 
-        songs = manager.getPlaylist();
         String title = songs.get(temp).getTitle();
 
         Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
@@ -128,6 +133,16 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         playSong();
     }
 
+    public void pauseSong(Intent intent) {
+        int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
+        remoteViews.setImageViewResource(R.id.imgWidgetPlay, R.drawable.play_button);
+        appWidgetManager.updateAppWidget(widgetId, remoteViews);
+
+        pauseSong();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -140,24 +155,42 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
 
             musicService = binder.getService();
-            musicService.setCallbacks(MusicPlayerWidgetService.this);
 
+            songs = manager.getPlaylist();
+
+            musicService.setList(songs);
+            musicBound = true;
+            musicService.setCallbacks(MusicPlayerWidgetService.this);
+            System.out.println("I've been here 3!");
 
             int temp = musicService.getSongPos();
             if (temp != -1) {
                 songPos = temp;
+                System.out.println("I've been here 4!");
                 //displaySongInfoWhenPlayingMusic();
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            musicBound = false;
         }
     };
 
     @Override
     public void updateMusicInfo() {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        /**if (musicBound) {
+            musicService.setCallbacks(null);
+            unbindService(widgetConnection);
+            musicBound = false;
+        }
+        stopService(playIntent);
+        musicService = null;*/
+        super.onDestroy();
     }
 }
