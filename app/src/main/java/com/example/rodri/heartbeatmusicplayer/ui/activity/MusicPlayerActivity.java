@@ -459,8 +459,11 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         }
 
         killThread = true;
-        stopService(playIntent);
-        musicService = null;
+        if (isPaused) {
+            stopService(playIntent);
+            musicService = null;
+        }
+
         super.onDestroy();
     }
 

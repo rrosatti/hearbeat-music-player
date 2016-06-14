@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
         songs = manager.getPlaylist();
         setList(songs);
-        
+
     }
 
 
@@ -151,6 +152,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     public void onDestroy() {
         super.onDestroy();
     }
+
 
 
 }

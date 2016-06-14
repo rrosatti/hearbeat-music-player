@@ -39,7 +39,7 @@ public class MusicService extends Service implements
     private MediaPlayer mediaPlayer;
     private ArrayList<Song> songsList;
     private int songPos;
-    private String songTitle;
+    public String songTitle;
 
     private final IBinder musicBind = new MusicBinder();
 
@@ -55,6 +55,8 @@ public class MusicService extends Service implements
         super.onCreate();
         songPos = 0;
         mediaPlayer = new MediaPlayer();
+
+        Toast.makeText(getApplicationContext(), "Testing", Toast.LENGTH_SHORT).show();
 
         sharedPreferences = getSharedPreferences(LASTSONG, Context.MODE_PRIVATE);
 
@@ -222,6 +224,8 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+
+        System.out.println("I've been here 7!");
 
         Intent intent = new Intent(this, MusicPlayerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
