@@ -1,5 +1,7 @@
 package com.example.rodri.heartbeatmusicplayer.widget;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +20,7 @@ import com.example.rodri.heartbeatmusicplayer.R;
 import com.example.rodri.heartbeatmusicplayer.service.MusicService;
 import com.example.rodri.heartbeatmusicplayer.song.Song;
 import com.example.rodri.heartbeatmusicplayer.song.SongsManager;
+import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
 
 import java.util.ArrayList;
 
@@ -36,10 +39,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
     private int songPos = 0;
     private MusicService musicService;
     private SongsManager manager;
-    private ArrayList<Song> songs = new ArrayList<>();;
-    private Intent playIntent = null;
-
-    private boolean musicBound = false;
+    private ArrayList<Song> songs = new ArrayList<>();
 
 
     public MusicPlayerWidgetService() {
@@ -54,14 +54,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
         songs = manager.getPlaylist();
         setList(songs);
-
-        /**if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, widgetConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-            Toast.makeText(getApplicationContext(), "I've been here 1!", Toast.LENGTH_SHORT).show();
-            System.out.println("I've been here 1!");
-        }*/
+        
     }
 
 
@@ -95,6 +88,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
                     ImageView pause = (ImageView) v.findViewById(R.id.imgWidgetPlay);
                     pause.setImageResource(R.drawable.stop_button);
                     System.out.println("I've been here 5!");
+
                     if (isPlaying()) {
                         Toast.makeText(getApplicationContext(), "pause", Toast.LENGTH_SHORT).show();
                         pauseSong(intent);
@@ -118,7 +112,7 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
             songPos = 0;
         }
 
-        String title = songs.get(temp).getTitle();
+        String title = songs.get(songPos).getTitle();
 
         Toast.makeText(getApplicationContext(), "Title: " + title, Toast.LENGTH_SHORT).show();
 
@@ -129,7 +123,6 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         remoteViews.setImageViewResource(R.id.imgWidgetPlay, R.drawable.stop_button);
         appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
-        setList(songs);
         playSong();
     }
 
@@ -149,34 +142,6 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
         return null;
     }
 
-    private ServiceConnection widgetConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
-
-            musicService = binder.getService();
-
-            songs = manager.getPlaylist();
-
-            musicService.setList(songs);
-            musicBound = true;
-            musicService.setCallbacks(MusicPlayerWidgetService.this);
-            System.out.println("I've been here 3!");
-
-            int temp = musicService.getSongPos();
-            if (temp != -1) {
-                songPos = temp;
-                System.out.println("I've been here 4!");
-                //displaySongInfoWhenPlayingMusic();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
     @Override
     public void updateMusicInfo() {
 
@@ -184,13 +149,8 @@ public class MusicPlayerWidgetService extends MusicService implements MusicServi
 
     @Override
     public void onDestroy() {
-        /**if (musicBound) {
-            musicService.setCallbacks(null);
-            unbindService(widgetConnection);
-            musicBound = false;
-        }
-        stopService(playIntent);
-        musicService = null;*/
         super.onDestroy();
     }
+
+
 }

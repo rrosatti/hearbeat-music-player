@@ -11,6 +11,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.rodri.heartbeatmusicplayer.R;
+import com.example.rodri.heartbeatmusicplayer.service.MusicService;
 import com.example.rodri.heartbeatmusicplayer.ui.activity.MusicPlayerActivity;
 
 /**
@@ -29,7 +30,7 @@ public class MusicPlayerWidgetProvider extends AppWidgetProvider {
         for (int  widgetId : allWidgetIds) {
 
             // Intent related with Play button
-            Intent playIntent = new Intent(context, MusicPlayerWidgetService.class);
+            Intent playIntent = new Intent(context, MusicService.class);
             playIntent.setAction(MusicPlayerWidgetService.PLAYSONG);
             playIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             PendingIntent playPendingIntent = PendingIntent.getService(context, 0, playIntent, 0);
