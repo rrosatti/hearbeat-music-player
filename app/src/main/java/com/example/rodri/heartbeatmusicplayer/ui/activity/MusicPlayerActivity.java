@@ -426,6 +426,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         System.out.println("onStart() was called ------------------");
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
+            System.out.println("playIntent is null ------------------");
             startService(playIntent);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
 
@@ -442,6 +443,7 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
         super.onResume();
         System.out.println("onResume() was called ------------------");
         if (playIntent == null) {
+            System.out.println("playIntent is null ------------------");
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
@@ -452,16 +454,19 @@ public class MusicPlayerActivity extends Activity implements MusicService.Servic
     @Override
     protected void onDestroy() {
         System.out.println("onDestroy() was called ------------------");
-        if (musicBound) {
-            musicService.setCallbacks(null);
-            unbindService(musicConnection);
-            musicBound = false;
-        }
+
 
         killThread = true;
         if (isPaused) {
             stopService(playIntent);
             musicService = null;
+
+            if (musicBound) {
+                musicService.setCallbacks(null);
+                unbindService(musicConnection);
+                musicBound = false;
+            }
+
         }
 
         super.onDestroy();
